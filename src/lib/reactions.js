@@ -1,6 +1,6 @@
 export const REACTIONS = [
   { kind: 'love', emoji: '❤️', label: 'Love', description: 'I really appreciated this' },
-  { kind: 'ameen', emoji: '🤲', label: 'Ameen', description: 'Saying ameen to a dua, or "may Allah make it so"' },
+  { kind: 'ameen', emoji: '🤲', label: 'Ameen', description: 'May Allah accept' },
   { kind: 'think', emoji: '💡', label: 'Made me think', description: 'This gave me something to reflect on' },
 ]
 
