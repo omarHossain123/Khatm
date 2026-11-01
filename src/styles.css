@@ -628,6 +628,119 @@ select {
   margin-top: 10px;
 }
 
+/* Reactions */
+.reactions {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.actions .reactions {
+  margin-top: 0;
+}
+
+.reaction-chip {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.reaction-chip.mine {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.reaction-add {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 26px;
+  border-radius: 999px;
+  border: 1px dashed var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.reaction-add:hover,
+.reaction-add[aria-expanded='true'] {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.reaction-picker {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 20;
+  width: min(300px, calc(100vw - 48px));
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
+}
+
+.picker-item {
+  font: inherit;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.picker-item:hover {
+  background: var(--surface-2);
+}
+
+.picker-item.mine {
+  background: var(--accent-soft);
+}
+
+.picker-emoji {
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.picker-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.picker-mine {
+  font-weight: 400;
+  color: var(--accent);
+  font-size: 12px;
+}
+
+.picker-desc {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
 .replies {
   margin-top: 12px;
   padding-left: 14px;

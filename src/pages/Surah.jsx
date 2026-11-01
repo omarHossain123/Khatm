@@ -6,6 +6,7 @@ import { clusterForSurah, groupForSurah } from '../data/clusters'
 import EditableText from '../components/EditableText'
 import Composer from '../components/Composer'
 import PostCard from '../components/PostCard'
+import { getDeviceId } from '../lib/reactions'
 
 const ayahNum = (p) => (p.ayah ? parseInt(p.ayah, 10) : Infinity)
 
@@ -14,21 +15,46 @@ export default function Surah() {
   const surah = getSurah(number)
   const [posts, setPosts] = useState(null)
   const [sort, setSort] = useState('new')
+  const [reactions, setReactions] = useState({})
+
+  const loadReactions = useCallback(async () => {
+    const { data } = await supabase.rpc('surah_reactions', { p_surah: number, p_device: getDeviceId() })
+    const map = {}
+    for (const r of data || []) (map[r.target_id] ??= {})[r.kind] = { count: r.count, mine: r.mine }
+    setReactions(map)
+  }, [number])
 
   const load = useCallback(async () => {
-    const { data } = await supabase
-      .from('posts')
-      .select('*, replies(*)')
-      .eq('surah', number)
-      .order('created_at', { ascending: false })
+    const [{ data }] = await Promise.all([
+      supabase.from('posts').select('*, replies(*)').eq('surah', number).order('created_at', { ascending: false }),
+      loadReactions(),
+    ])
     setPosts(data || [])
-  }, [number])
+  }, [number, loadReactions])
 
   useEffect(() => {
     setPosts(null)
+    setReactions({})
     window.scrollTo(0, 0)
     if (surah) load()
   }, [surah, load])
+
+  // Update the count right away, then save; if saving fails, reload the real counts.
+  const react = async ({ postId = null, replyId = null }, kind) => {
+    const id = postId ?? replyId
+    setReactions((prev) => {
+      const cur = prev[id]?.[kind] ?? { count: 0, mine: false }
+      const next = { count: cur.count + (cur.mine ? -1 : 1), mine: !cur.mine }
+      return { ...prev, [id]: { ...prev[id], [kind]: next } }
+    })
+    const { error } = await supabase.rpc('toggle_reaction', {
+      p_device: getDeviceId(),
+      p_post_id: postId,
+      p_reply_id: replyId,
+      p_kind: kind,
+    })
+    if (error) loadReactions()
+  }
 
   if (!surah) {
     return (
@@ -92,7 +118,7 @@ export default function Surah() {
         <section className="pinned-block">
           <h2 className="section-title">Reflection questions</h2>
           {pinned.map((p) => (
-            <PostCard key={p.id} post={p} maxAyah={surah.ayahs} onChange={load} />
+            <PostCard key={p.id} post={p} maxAyah={surah.ayahs} onChange={load} reactions={reactions} onReact={react} />
           ))}
         </section>
       )}
@@ -120,7 +146,7 @@ export default function Surah() {
           </div>
         )}
         {discussion.map((p) => (
-          <PostCard key={p.id} post={p} maxAyah={surah.ayahs} onChange={load} />
+          <PostCard key={p.id} post={p} maxAyah={surah.ayahs} onChange={load} reactions={reactions} onReact={react} />
         ))}
       </section>
 

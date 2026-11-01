@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { timeAgo, useStore } from '../lib/store'
 import Composer from './Composer'
+import Reactions from './Reactions'
 
 function Author({ isAdmin, createdAt }) {
   return (
@@ -28,7 +29,7 @@ function ReportButton({ postId, replyId }) {
   )
 }
 
-export default function PostCard({ post, maxAyah, onChange }) {
+export default function PostCard({ post, maxAyah, onChange, reactions, onReact }) {
   const { isAdmin } = useStore()
   const [replying, setReplying] = useState(false)
   // Pinned questions collect many answers, so keep them folded to keep the page scannable.
@@ -55,6 +56,8 @@ export default function PostCard({ post, maxAyah, onChange }) {
         {post.ayah && <span className="badge ayah">Ayah {post.ayah}</span>}
       </div>
       <p className="prose">{post.body}</p>
+
+      <Reactions state={reactions[post.id]} onToggle={(kind) => onReact({ postId: post.id }, kind)} />
 
       <div className="actions">
         <button className="link-btn" onClick={() => setReplying(!replying)}>
@@ -86,6 +89,7 @@ export default function PostCard({ post, maxAyah, onChange }) {
               <Author isAdmin={r.is_admin} createdAt={r.created_at} />
               <p className="prose">{r.body}</p>
               <div className="actions">
+                <Reactions state={reactions[r.id]} onToggle={(kind) => onReact({ replyId: r.id }, kind)} />
                 <div className="spacer" />
                 {!isAdmin && <ReportButton replyId={r.id} />}
                 {isAdmin && (

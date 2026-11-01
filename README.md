@@ -12,6 +12,7 @@ Stack: React + Vite (frontend), Supabase (database and admin login). Both run on
    Save the database password somewhere, though you won't need it day-to-day.
 2. Open **SQL Editor → New query**, paste the whole of `supabase/schema.sql`, and click **Run**.
    This creates the tables, the security rules, and fills in all 12 cluster themes.
+   Then do the same with `supabase/reactions.sql` to add reactions (❤️ 🤲 💡).
 3. **Turn off public sign-ups** so nobody else can create an account:
    **Authentication → Sign In / Providers → Email**, then turn off **Allow new users to sign up**
    (keep the Email provider itself enabled).
